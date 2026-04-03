@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trestech - Animando Sonhos</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; display: flex; flex-direction: column; height: 100vh; }
+    canvas { display: block; flex: 1; }
+    footer { background: rgba(0,0,0,0.7); color: white; text-align: center; padding: 10px; font-family: Arial, sans-serif; }
+    footer a { color: #88ccff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <script type="importmap">
+    {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const scene = new THREE.Scene();
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 1000;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 2000;
+      starPositions[i + 1] = (Math.random() - 0.5) * 2000;
+      starPositions[i + 2] = (Math.random() - 0.5) * 2000;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 10);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0x404040));
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    const loader = new STLLoader();
+    let mesh;
+    let baseScale = 0.1;
+    loader.load('IMGS/Trestech.stl', (geometry) => {
+      const material = new THREE.MeshPhongMaterial({ color: 0x88ccff, shininess: 100 });
+      mesh = new THREE.Mesh(geometry, material);
+      adjustMeshScale(mesh, baseScale);
+      scene.add(mesh);
+    });
+
+    function adjustMeshScale(mesh, baseScale) {
+      const breakpointSmall = 768;
+      let scale = baseScale;
+      if (window.innerWidth < breakpointSmall) scale *= 0.7;
+      mesh.scale.set(scale, scale, scale);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      if (mesh) mesh.rotation.y += 0.01;
+      stars.rotation.y += 0.0001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (mesh) adjustMeshScale(mesh, baseScale);
+    });
+  </script>
+ 
+</body>
+</html>
