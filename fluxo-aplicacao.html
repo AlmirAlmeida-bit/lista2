@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fluxo da Aplicação — Lista da Eliane</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      padding: 40px 32px 60px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── Capa ── */
+    .capa {
+      text-align: center;
+      margin-bottom: 52px;
+      padding-bottom: 36px;
+      border-bottom: 3px solid #F59E0B;
+    }
+    .capa .badge {
+      display: inline-block;
+      background: #F59E0B;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+    .capa h1 { font-size: 30px; font-weight: 800; color: #111827; margin-bottom: 8px; }
+    .capa .subtitulo { font-size: 14px; color: #6B7280; margin-bottom: 16px; }
+    .dica-pdf {
+      display: inline-block;
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      color: #92400E;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 8px;
+    }
+
+    /* ── Seções ── */
+    .secao { margin-bottom: 52px; }
+    .secao-titulo {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #fff;
+      background: #1F2937;
+      padding: 8px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    .secao-desc {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      padding: 12px 16px;
+      background: #fff;
+      border-left: 4px solid #F59E0B;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ── Diagrama ── */
+    .diagrama {
+      background: #fff;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 36px 28px;
+      overflow-x: auto;
+    }
+
+    /* ── Legenda de cores ── */
+    .legenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: #374151;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      padding: 5px 12px;
+      border-radius: 50px;
+    }
+    .legenda-cor {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── Cards de arquivos ── */
+    .arquivos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px;
+    }
+    .arquivo-card {
+      background: #fff;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 16px 18px;
+      transition: border-color .2s;
+    }
+    .arquivo-card:hover { border-color: #F59E0B; }
+    .arquivo-nome {
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      color: #1F2937;
+      margin-bottom: 6px;
+    }
+    .arquivo-desc { font-size: 12px; color: #6B7280; line-height: 1.6; }
+    .arquivo-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 50px;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .tag-react  { background: #DBEAFE; color: #1D4ED8; }
+    .tag-config { background: #F3F4F6; color: #374151; }
+    .tag-banco  { background: #D1FAE5; color: #065F46; }
+    .tag-estilo { background: #FEF3C7; color: #92400E; }
+
+    /* ── Tabela do banco ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #1F2937; }
+    th { text-align: left; padding: 11px 16px; color: #fff; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+    td { padding: 11px 16px; border-bottom: 1px solid #F3F4F6; color: #374151; vertical-align: top; }
+    td:first-child { font-family: 'Courier New', monospace; font-weight: 700; color: #111827; white-space: nowrap; }
+    tr:nth-child(even) td { background: #FAFAFA; }
+    .rls-note {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #065F46;
+      line-height: 1.6;
+    }
+
+    /* ── Divisor ── */
+    .divisor {
+      border: none;
+      border-top: 1px dashed #E5E7EB;
+      margin: 48px 0;
+    }
+
+    /* ── Rodapé ── */
+    .rodape {
+      margin-top: 52px;
+      padding-top: 20px;
+      border-top: 2px solid #E5E7EB;
+      text-align: center;
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+
+    @media print {
+      body { background: #fff; padding: 16px; max-width: 100%; }
+      .dica-pdf { display: none; }
+      .arquivo-card:hover { border-color: #E5E7EB; }
+      .diagrama { page-break-inside: avoid; }
+      .secao { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Capa ── -->
+  <div class="capa">
+    <div class="badge">Documentação Técnica</div>
+    <h1>Mapa do Fluxo da Aplicação</h1>
+    <p class="subtitulo">Lista da Eliane &nbsp;·&nbsp; React + Vite + Tailwind CSS + Supabase &nbsp;·&nbsp; Abril de 2026</p>
+  </div>
+
+
+  <!-- ── SEÇÃO 1: Autenticação ── -->
+  <div class="secao">
+    <div class="secao-titulo">&#128274; Etapa 1 — Acesso e Autenticação</div>
+    <div class="secao-desc">
+      Quando o usuário abre o site, o sistema verifica automaticamente se já existe uma sessão ativa (login salvo).
+      Se não houver sessão, ele vai para a tela de Login. Se já estiver logado, vai direto para a Lista de Compras.
+    </div>
+    <div class="diagrama">
+      <div class="mermaid">
+%%{init: {'flowchart': {'curve': 'stepAfter', 'nodeSpacing': 50, 'rankSpacing': 60}}}%%
+flowchart TD
+    INICIO([Usuário abre o site]) --> VERIFICA[App verifica se há sessão ativa]
+
+    VERIFICA -->|Aguardando resposta do banco| SPINNER[Exibe animação de carregamento]
+    SPINNER --> VERIFICA
+
+    VERIFICA -->|Não está logado| LOGIN[Tela de LOGIN]
+    VERIFICA -->|Já está logado| LISTA[Tela da Lista de Compras]
+
+    LOGIN -->|Clica em Cadastrar| CADASTRO[Tela de CADASTRO]
+    CADASTRO -->|Clica em Entrar| LOGIN
+
+    LOGIN -->|E-mail ou senha incorretos| ERRO_LOGIN[Mensagem de erro na tela]
+    ERRO_LOGIN --> LOGIN
+    LOGIN -->|E-mail e senha corretos| LISTA
+
+    CADASTRO -->|Senhas digitadas são diferentes| ERRO_SENHA[Mensagem: senhas não coincidem]
+    ERRO_SENHA --> CADASTRO
+    CADASTRO -->|Senha com menos de 6 caracteres| ERRO_SENHA
+    CADASTRO -->|Dados corretos, conta criada| CONFIRMACAO[Aviso: confirme seu e-mail]
+    CONFIRMACAO --> LOGIN
+
+    LISTA -->|Clica no botão Sair| LOGOUT[Encerra a sessão no banco]
+    LOGOUT --> LOGIN
+      </div>
+    </div>
+    <div class="legenda">
+      <div class="legenda-item"><div class="legenda-cor" style="background:#bbf7d0"></div> Telas principais</div>
+      <div class="legenda-item"><div class="legenda-cor" style="background:#fecaca"></div> Mensagens de erro</div>
+      <div class="legenda-item"><div class="legenda-cor" style="background:#e0f2fe"></div> Estados intermediários</div>
+    </div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- ── SEÇÃO 2: Lista de Compras ── -->
+  <div class="secao">
+    <div class="secao-titulo">&#128722; Etapa 2 — Usando a Lista de Compras</div>
+    <div class="secao-desc">
+      Após o login, o usuário acessa a tela principal com duas abas: <strong>Nova Lista</strong> (para criar e editar itens)
+      e <strong>Minhas Listas</strong> (para ver as listas salvas no banco de dados).
+    </div>
+    <div class="diagrama">
+      <div class="mermaid">
+%%{init: {'flowchart': {'curve': 'stepAfter', 'nodeSpacing': 50, 'rankSpacing': 60}}}%%
+flowchart TD
+    LISTA[Tela da Lista de Compras] --> ABA{Qual aba o usuário escolheu?}
+
+    ABA -->|Aba: Nova Lista| FORM[Formulário de nova lista]
+    ABA -->|Aba: Minhas Listas| BUSCA[Busca as listas salvas no banco]
+
+    FORM --> PREENCHE[Preenche: nome da lista, item, quantidade e unidade]
+    PREENCHE --> ADICIONA[Clica em Adicionar]
+    ADICIONA --> TABELA[Item aparece na tabela]
+    TABELA -->|Adicionar mais itens| PREENCHE
+    TABELA -->|Remover um item| TABELA
+    TABELA -->|Editar o último item| PREENCHE
+
+    TABELA --> ACAO{Qual botão clicou?}
+    ACAO -->|Salvar| INSERT[(Banco: salva como nova lista)]
+    ACAO -->|Atualizar| UPDATE[(Banco: atualiza lista existente)]
+    ACAO -->|Exportar PDF| PDF_NOVO[Faz download do PDF]
+    ACAO -->|Cancelar edição| FORM
+
+    INSERT --> BUSCA
+    UPDATE --> BUSCA
+
+    BUSCA --> CARDS[Mostra os cards de cada lista]
+    CARDS --> ACAO2{O que quer fazer com a lista?}
+    ACAO2 -->|Editar| FORM
+    ACAO2 -->|Exportar PDF| PDF_SALVO[Faz download do PDF]
+    ACAO2 -->|Excluir| DELETE[(Banco: apaga a lista)]
+    DELETE --> BUSCA
+      </div>
+    </div>
+    <div class="legenda">
+      <div class="legenda-item"><div class="legenda-cor" style="background:#fef08a"></div> Decisões do usuário</div>
+      <div class="legenda-item"><div class="legenda-cor" style="background:#d1fae5"></div> Ações no banco de dados</div>
+      <div class="legenda-item"><div class="legenda-cor" style="background:#e0f2fe"></div> Telas e formulários</div>
+    </div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- ── SEÇÃO 3: Arquivos ── -->
+  <div class="secao">
+    <div class="secao-titulo">&#128196; Etapa 3 — O que cada arquivo faz</div>
+    <div class="secao-desc">
+      O projeto é dividido em arquivos com responsabilidades bem separadas. Cada um cuida de uma parte específica da aplicação.
+    </div>
+    <div class="arquivos">
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-react">React</div>
+        <div class="arquivo-nome">App.tsx</div>
+        <div class="arquivo-desc">É o "porteiro" da aplicação. Verifica se o usuário está logado e decide qual tela mostrar: Login, Cadastro ou Lista de Compras.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-react">React</div>
+        <div class="arquivo-nome">components/Login.tsx</div>
+        <div class="arquivo-desc">Tela de login. Tem os campos de e-mail e senha. Quando o usuário clica em Entrar, manda os dados para o Supabase verificar.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-react">React</div>
+        <div class="arquivo-nome">components/Cadastro.tsx</div>
+        <div class="arquivo-desc">Tela de criação de conta. Valida se as senhas digitadas são iguais antes de enviar para o Supabase criar o usuário.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-react">React</div>
+        <div class="arquivo-nome">components/ListaCompras.tsx</div>
+        <div class="arquivo-desc">Tela principal. Contém todo o sistema de listas: adicionar itens, salvar no banco, editar, excluir e exportar PDF.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-banco">Banco</div>
+        <div class="arquivo-nome">supabaseClient.ts</div>
+        <div class="arquivo-desc">Arquivo de conexão com o banco de dados. Lê as credenciais do arquivo .env e cria a "ponte" entre o app e o Supabase.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-config">Config</div>
+        <div class="arquivo-nome">app/.env</div>
+        <div class="arquivo-desc">Guarda as chaves secretas do Supabase (URL e senha). NUNCA vai para o GitHub — protegido pelo .gitignore.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-config">Config</div>
+        <div class="arquivo-nome">vite.config.ts</div>
+        <div class="arquivo-desc">Configura como o projeto é compilado. Define os plugins (React, Tailwind) e o endereço base para o GitHub Pages.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-config">Config</div>
+        <div class="arquivo-nome">package.json</div>
+        <div class="arquivo-desc">Lista todas as bibliotecas usadas no projeto. O comando "npm run deploy" faz o build e publica no GitHub Pages automaticamente.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-estilo">Estilo</div>
+        <div class="arquivo-nome">src/index.css</div>
+        <div class="arquivo-desc">Arquivo de estilo global. Importa o Tailwind CSS, que é o sistema de classes de design usado em toda a aplicação.</div>
+      </div>
+      <div class="arquivo-card">
+        <div class="arquivo-tag tag-config">Config</div>
+        <div class="arquivo-nome">.gitignore</div>
+        <div class="arquivo-desc">Lista de arquivos que o GitHub deve ignorar. Protege o .env (credenciais), node_modules (dependências) e dist (build gerado).</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divisor">
+
+  <!-- ── SEÇÃO 4: Banco de dados ── -->
+  <div class="secao">
+    <div class="secao-titulo">&#128668; Etapa 4 — Banco de Dados (Supabase)</div>
+    <div class="secao-desc">
+      Os dados das listas de compras são salvos no Supabase em uma tabela chamada <code style="background:#F3F4F6; padding: 2px 6px; border-radius:4px; font-size:12px;">listas_compras</code>.
+      Cada usuário só consegue ver e modificar as suas próprias listas — isso é garantido pelas políticas de segurança (RLS).
+    </div>
+    <div class="diagrama" style="padding: 0; overflow: hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>Coluna</th>
+            <th>Tipo de dado</th>
+            <th>O que guarda</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>id</td>
+            <td>uuid</td>
+            <td>Identificador único de cada lista — gerado automaticamente pelo banco</td>
+          </tr>
+          <tr>
+            <td>user_id</td>
+            <td>uuid</td>
+            <td>ID do usuário dono da lista — vinculado ao sistema de login do Supabase</td>
+          </tr>
+          <tr>
+            <td>nome</td>
+            <td>text</td>
+            <td>Nome da lista digitado pelo usuário (ex: "Mercado da semana")</td>
+          </tr>
+          <tr>
+            <td>itens</td>
+            <td>jsonb</td>
+            <td>Lista dos itens em formato JSON. Ex: [{ "item": "Arroz", "quantidade": 2, "unidade": "kg" }]</td>
+          </tr>
+          <tr>
+            <td>created_at</td>
+            <td>timestamptz</td>
+            <td>Data e hora em que a lista foi criada — preenchido automaticamente pelo banco</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="rls-note" style="margin: 16px; border-radius: 8px;">
+        <strong>&#128274; Segurança: Row Level Security (RLS) ativado</strong><br>
+        Políticas configuradas para as 4 operações: SELECT (ler), INSERT (salvar), UPDATE (atualizar) e DELETE (excluir).
+        Cada usuário logado só tem acesso às listas onde o <code>user_id</code> é igual ao seu próprio ID.
+        Isso significa que nenhum usuário consegue ver ou modificar as listas de outro usuário.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── Rodapé ── -->
+  <div class="rodape">
+    &copy; 2026 <strong>trestech.com.br</strong> &nbsp;·&nbsp; Almir Almeida &nbsp;·&nbsp; Projeto: Lista da Eliane
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      flowchart: {
+        curve: 'stepAfter',
+        nodeSpacing: 50,
+        rankSpacing: 60,
+      }
+    })
+  </script>
+</body>
+</html>
