@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Equipe – Dream Factory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── Wrapper principal ── */
+        .wrapper {
+            position: relative;
+            width: 740px;
+            height: 580px;
+        }
+
+        /* ── SVG do leque ── */
+        #fanSVG {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 2;
+            overflow: visible;
+        }
+
+        /* ── Fatias do leque ── */
+        .fan-slice {
+            cursor: pointer;
+            transition: filter 0.28s ease, transform 0.28s ease;
+            transform-box: fill-box;
+            transform-origin: 50px 290px;
+        }
+
+        .fan-slice:hover {
+            filter: brightness(1.22) drop-shadow(3px 5px 14px rgba(0, 0, 0, 0.30));
+            transform: translateX(7px);
+        }
+
+        /* ── Cartão de informação ── */
+        .info-card {
+            position: absolute;
+            left: 290px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transform: translateX(-36px);
+            transition:
+                opacity  0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .info-card.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ── Ícone circular ── */
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2.5px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.28s ease;
+        }
+
+        .info-card.show .card-icon {
+            transform: scale(1.08);
+        }
+
+        .card-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        /* ── Texto ── */
+        .card-text h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2354;
+            white-space: nowrap;
+            line-height: 1.25;
+        }
+
+        .card-text p {
+            font-size: 12.5px;
+            color: #7a8a9a;
+            white-space: nowrap;
+            margin-top: 3px;
+        }
+
+        /* ── Linha conectora (SVG) ── */
+        .connector {
+            transition: opacity 0.38s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper" id="wrapper">
+    <svg id="fanSVG" width="285" height="580" viewBox="0 0 285 580"></svg>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────
+   Dados de cada segmento
+───────────────────────────────────────────── */
+const DATA = [
+    {
+        n: '01',
+        title: 'Copa e Limpeza',
+        sub: 'Janete e Vanessa',
+        color: '#1a2354',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
+                 <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>
+                 <line x1="6"  y1="2" x2="6"  y2="4"/>
+                 <line x1="10" y1="2" x2="10" y2="4"/>
+                 <line x1="14" y1="2" x2="14" y2="4"/>
+               </svg>`
+    },
+    {
+        n: '02',
+        title: 'Transporte',
+        sub: 'Marcelo e Ricardo',
+        color: '#1e4db7',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <rect x="1" y="3" width="15" height="13" rx="2"/>
+                 <path d="M16 8h4l3 5v3h-7V8z"/>
+                 <circle cx="5.5"  cy="18.5" r="2.5"/>
+                 <circle cx="18.5" cy="18.5" r="2.5"/>
+               </svg>`
+    },
+    {
+        n: '03',
+        title: 'Administrativo',
+        sub: 'Janaína',
+        color: '#00b4d8',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                 <path d="M14 2v6h6"/>
+                 <polyline points="16 13 12 17 10 15"/>
+               </svg>`
+    },
+    {
+        n: '04',
+        title: 'Recepção',
+        sub: 'Carla e Thalita',
+        color: '#7fb3c8',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                 <circle cx="9" cy="7" r="4"/>
+                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                 <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+               </svg>`
+    },
+    {
+        n: '05',
+        title: 'Envios & Manutenções',
+        sub: 'Cosme',
+        color: '#3d9be9',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77
+                          a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91
+                          a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+               </svg>`
+    },
+    {
+        n: '06',
+        title: 'TI',
+        sub: 'Almir, André e Millena',
+        color: '#0077b6',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                 <line x1="8"  y1="21" x2="16" y2="21"/>
+                 <line x1="12" y1="17" x2="12" y2="21"/>
+               </svg>`
+    }
+];
+
+/* ─────────────────────────────────────────────
+   Geometria do leque
+───────────────────────────────────────────── */
+const CX          = 50;
+const CY          = 290;
+const R1          = 68;
+const R2          = 218;
+const TOTAL_ANGLE = 132;
+const GAP_DEG     = 2.8;
+const SEG_ANGLE   = (TOTAL_ANGLE - GAP_DEG * (DATA.length - 1)) / DATA.length;
+const START_ANGLE = -TOTAL_ANGLE / 2;
+
+function toXY(deg, r) {
+    const rad = deg * Math.PI / 180;
+    return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
+}
+
+function fmt(v) { return v.toFixed(2); }
+
+function buildSectorPath(t1, t2) {
+    const [ax, ay] = toXY(t1, R1),  [bx, by] = toXY(t1, R2);
+    const [cx, cy] = toXY(t2, R2),  [dx, dy] = toXY(t2, R1);
+    const large = (t2 - t1) > 180 ? 1 : 0;
+    return [
+        `M${fmt(ax)} ${fmt(ay)}`,
+        `L${fmt(bx)} ${fmt(by)}`,
+        `A${R2} ${R2} 0 ${large} 1 ${fmt(cx)} ${fmt(cy)}`,
+        `L${fmt(dx)} ${fmt(dy)}`,
+        `A${R1} ${R1} 0 ${large} 0 ${fmt(ax)} ${fmt(ay)}`,
+        'Z'
+    ].join(' ');
+}
+
+/* ─────────────────────────────────────────────
+   Renderização
+───────────────────────────────────────────── */
+const NS      = 'http://www.w3.org/2000/svg';
+const svgEl   = document.getElementById('fanSVG');
+const wrapper = document.getElementById('wrapper');
+
+DATA.forEach((seg, i) => {
+    const t1   = START_ANGLE + i * (SEG_ANGLE + GAP_DEG);
+    const t2   = t1 + SEG_ANGLE;
+    const tMid = (t1 + t2) / 2;
+
+    /* pontos de referência */
+    const [, outerY]  = toXY(tMid, R2);
+    const [lbx, lby]  = toXY(tMid, R1 + (R2 - R1) * 0.52);   /* centro do label */
+    const [lineX, lineY] = toXY(tMid, R2 + 2);                 /* ponta da linha */
+
+    /* ── Linha conectora (criada antes da fatia para ficar atrás) ── */
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', fmt(lineX));
+    line.setAttribute('y1', fmt(lineY));
+    line.setAttribute('x2', '282');
+    line.setAttribute('y2', fmt(lineY));
+    line.setAttribute('stroke', seg.color);
+    line.setAttribute('stroke-width', '1.2');
+    line.setAttribute('stroke-dasharray', '5 4');
+    line.setAttribute('opacity', '0');
+    line.classList.add('connector');
+    svgEl.appendChild(line);
+
+    /* ── Fatia SVG ── */
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', buildSectorPath(t1, t2));
+    path.setAttribute('fill', seg.color);
+    path.classList.add('fan-slice');
+    svgEl.appendChild(path);
+
+    /* ── Número da fatia ── */
+    const text = document.createElementNS(NS, 'text');
+    text.setAttribute('x', fmt(lbx));
+    text.setAttribute('y', fmt(lby));
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('fill', 'white');
+    text.setAttribute('font-size', '11.5');
+    text.setAttribute('font-weight', '700');
+    text.setAttribute('font-family', 'Poppins, Segoe UI, sans-serif');
+    text.setAttribute('pointer-events', 'none');
+    text.textContent = seg.n;
+    svgEl.appendChild(text);
+
+    /* ── Cartão HTML ── */
+    const card = document.createElement('div');
+    card.className = 'info-card';
+    card.style.top  = `${outerY - 26}px`;
+    card.innerHTML  = `
+        <div class="card-icon"
+             style="border-color:${seg.color}; color:${seg.color}; background:${seg.color}1a">
+            ${seg.icon}
+        </div>
+        <div class="card-text">
+            <h3>${seg.title}</h3>
+            <p>${seg.sub}</p>
+        </div>
+    `;
+    wrapper.appendChild(card);
+
+    /* ── Eventos de hover ── */
+    path.addEventListener('mouseenter', () => {
+        card.classList.add('show');
+        line.style.opacity = '1';
+    });
+
+    path.addEventListener('mouseleave', () => {
+        card.classList.remove('show');
+        line.style.opacity = '0';
+    });
+});
+
+/* ─────────────────────────────────────────────
+   Animação de entrada ao carregar
+───────────────────────────────────────────── */
+const slices = svgEl.querySelectorAll('.fan-slice');
+slices.forEach((s, i) => {
+    s.style.opacity   = '0';
+    s.style.transform = 'translateX(-10px)';
+    setTimeout(() => {
+        s.style.transition = 'opacity 0.45s ease, transform 0.45s ease, filter 0.28s ease';
+        s.style.opacity    = '1';
+        s.style.transform  = '';
+    }, 80 + i * 90);
+});
+</script>
+</body>
+</html>
