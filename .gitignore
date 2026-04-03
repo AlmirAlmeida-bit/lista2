@@ -1,0 +1,21 @@
+# ─── Credenciais (NUNCA subir para o GitHub) ───────────────
+app/.env
+app/.env.local
+app/.env.*.local
+
+# ─── Dependências ──────────────────────────────────────────
+app/node_modules/
+
+# ─── Build gerado pelo Vite (o gh-pages faz o deploy separado) ──
+app/dist/
+app/dist-ssr/
+
+# ─── Cache e logs ──────────────────────────────────────────
+app/.vite/
+*.log
+npm-debug.log*
+
+# ─── Sistema operacional ───────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
